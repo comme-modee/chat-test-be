@@ -27,7 +27,7 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
     cors: {
-        origin: 'http://localhost:3000'
+        origin: 'https://dev-ing-with-chat.netlify.app'
     },
 });
 

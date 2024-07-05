@@ -5,6 +5,7 @@ const parseDate = require("../utils/parseDate");
 const formatDateTime = require("../utils/formatDateTime");
 const User = require("../model/User");
 const { getUserByNickName } = require("./user.controller");
+const chatController = require("./chat.controller");
 
 meetUpController.createMeetUp = async (req, res) => {
     try {
@@ -36,6 +37,11 @@ meetUpController.createMeetUp = async (req, res) => {
         newMeetUp.participants.push(userId);
 
         await newMeetUp.save();
+
+        chatController.createChatRoom({
+            host: newMeetUp.organizer,
+            roomId: newMeetUp._id,
+        })
 
         const user = await User.findById(userId);
         await user.addActivity(userId);
@@ -207,13 +213,13 @@ meetUpController.joinMeetUp = async (req, res) => {
         await meetUp.save();
         await meetUp.checkIsClosed();
 
-        await MeetUp.populate(meetUp, {
-            path: "participants",
-            select: "nickName profileImage",
-        });
+        // await MeetUp.populate(meetUp, {
+        //     path: "participants",
+        //     select: "nickName profileImage",
+        // });
 
         // 참가자가 들어올때마다 chatRoom에 추가한다.
-        chatController.addParticipants({ userId, roomId: meetUpId });
+        chatController.addParticipant({ userId, roomId: meetUpId });
 
         res.status(200).json({ status: "success", data: { meetUp } });
     } catch (error) {
@@ -251,6 +257,8 @@ meetUpController.leaveMeetUp = async (req, res) => {
             path: "participants",
             select: "nickName profileImage",
         });
+
+        chatController.removeParticipant({ userId, roomId: meetUpId });
 
         res.status(200).json({ status: "success", data: { meetUp } });
     } catch (error) {

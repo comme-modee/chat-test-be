@@ -9,6 +9,7 @@ const qnaApi = require("./qna.api");
 const homeApi = require("./home.api");
 const reportApi = require("./report.api");
 const adminApi = require("./admin.api");
+const chatApi = require("./chat.api");
 
 router.use("/user", userApi);
 router.use("/auth", authApi);
@@ -18,5 +19,6 @@ router.use("/qna", qnaApi);
 router.use("/home", homeApi);
 router.use("/report", reportApi);
 router.use("/admin", adminApi);
+router.use("/chat", chatApi);
 
 module.exports = router;

@@ -360,4 +360,17 @@ userController.resetPassword = async (req, res) => {
     }
 }
 
+userController.changeOnlineState = async ({ userId, onlineState }) => {
+    try {
+        const user = await User.findById(userId)
+        if(!user) throw new Error('유저가 존재하지 않습니다')
+        user.online = onlineState;
+        await user.save();
+
+        return user.online;
+    } catch (error) {
+        return error.message
+    }
+}
+
 module.exports = userController;

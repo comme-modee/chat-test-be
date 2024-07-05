@@ -4,21 +4,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const USER_DEFAULT_IMAGE = process.env.USER_DEFAULT_IMAGE;
-const formatDateTime = require("../utils/formatDateTime");
 const scrapSchema = require("./Scrap");
-
-const stackEnum = [
-    "Python",
-    "C",
-    "C++",
-    "Java",
-    "C#",
-    "Javascript",
-    "TypeScript",
-    "R",
-    "Go",
-    "Object-C",
-];
 
 const rankEnum = [
     "Entry",
@@ -59,6 +45,7 @@ const userSchema = Schema({
     isNicknameAndGenderChange: { type: Boolean, default: false },
     googleUser: { type: Boolean, default: false },
     acitivity: { type: Number, default: 0 },
+    online: { type: Boolean, default: false }
 });
 
 userSchema.methods.toJSON = function () {
@@ -66,7 +53,7 @@ userSchema.methods.toJSON = function () {
     delete obj.password;
     delete obj.updateAt;
     delete obj.__v;
-    obj.createAt = formatDateTime(obj.createAt); // createAt 포맷팅
+    // obj.createAt = formatDateTime(obj.createAt); // createAt 포맷팅
     return obj;
 };
 

@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
 const indexRouter = require("./routes/index");
+const chatController = require("./controllers/chat.controller");
 require("dotenv").config();
 
 app.use(cors());
@@ -28,10 +29,14 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
         origin: 'https://dev-ing-with-chat.netlify.app'
+        // origin: 'http://localhost:3000'
     },
 });
 
 require("./utils/io")(io);
+
+//챗컨트롤러에서 io사용하기 위해 전달
+chatController.useSocketIo(io)
 
 httpServer.listen(PORT, () => {
     console.log("server listening on port", PORT);

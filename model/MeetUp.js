@@ -26,7 +26,7 @@ meetUpSchema.methods.toJSON = function () {
     const obj = this.toObject();
     delete obj.updateAt;
     delete obj.__v;
-    obj.createAt = formatDateTime(obj.createAt);
+    // obj.createAt = formatDateTime(obj.createAt);
     obj.date = formatDateTime(obj.date);
     obj.currentParticipants = obj.participants.length;
     return obj;

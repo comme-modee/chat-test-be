@@ -360,14 +360,31 @@ userController.resetPassword = async (req, res) => {
     }
 }
 
-userController.changeOnlineState = async ({ userId, onlineState }) => {
+userController.userOnlineState = async ({ userId, socketId, online }) => {
     try {
-        const user = await User.findById(userId)
-        if(!user) throw new Error('유저가 존재하지 않습니다')
-        user.online = onlineState;
-        await user.save();
+        if(userId && socketId && online) {
+            const user = await User.findById(userId)
+            if(!user) throw new Error('유저가 존재하지 않습니다')
+    
+            user.online = {
+                socketId,
+                online
+            };
+            await user.save();
+    
+            return user;
+        } else if(!userId && socketId && !online) {
+            const user = await User.findOne({ 'online.socketId': socketId })
+            if(!user) throw new Error('소켓 ID에 해당하는 유저가 존재하지 않습니다');
 
-        return user.online;
+            user.online = {
+                socketId,
+                online
+            };
+            await user.save();
+        }
+        console.log(userId, socketId, online)
+        
     } catch (error) {
         return error.message
     }

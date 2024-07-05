@@ -4,8 +4,14 @@ const userController = require("../controllers/user.controller");
 module.exports = function (io) {
     io.on("connection", async (socket) => {
         console.log("connected: ", socket.id);
-        io.emit('online', { socketId: socket.id, online: true });
-        // socket.emit('online', { userId: socket.id, online: true });
+        socket.on('user', async (userId, callback) => {
+            try {
+                const findUser = await userController.userOnlineState({ userId, socketId: socket.id, online: true })
+                callback({ ok: true, data: findUser })
+            } catch (error) {
+                callback({ ok: false, error })
+            }
+        })
 
         socket.on('enterChatRoom', async (roomId, callback) => {
             console.log('채팅방 id는: ', roomId)
@@ -32,9 +38,9 @@ module.exports = function (io) {
         })
 
         //socket을 받은 후에 socket의 연결이 끊길 경우 진행되는 로직
-        socket.on('disconnect', () => {
-            console.log('user is disconnected');
-            io.emit('online', { socketId: socket.id, online: false });
+        socket.on('disconnect', async () => {
+            console.log('user is disconnected', socket.id);
+            await userController.userOnlineState({ userId: null, socketId: socket.id, online: false })
         })
     });
 }
